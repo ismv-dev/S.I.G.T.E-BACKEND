@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /usr/src/app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN apt-get update \
   && apt-get install -y python3 build-essential --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
@@ -14,11 +14,11 @@ COPY . .
 RUN pnpm exec prisma generate
 RUN pnpm run build
 
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 
 WORKDIR /usr/src/app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install --production --frozen-lockfile
 
