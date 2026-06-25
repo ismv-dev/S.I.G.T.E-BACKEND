@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const mockPrismaService = {
@@ -67,14 +68,14 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('returns an access token with the signed payload', async () => {
-      const payload = { id: '1', email: 'test@example.com', role: 'USER' };
+      const payload = { id: '1', email: 'test@example.com', role: Role.USER };
       const result = await service.login(payload);
 
       expect(result).toEqual({ access_token: 'token' });
       expect(mockJwtService.sign).toHaveBeenCalledWith({
         email: 'test@example.com',
         sub: '1',
-        role: 'USER',
+        role: Role.USER,
       });
     });
   });
